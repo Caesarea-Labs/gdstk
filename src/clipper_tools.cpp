@@ -207,8 +207,29 @@ static void bounding_box(ClipperLib::Path& points, ClipperLib::cInt* bb) {
     }
 }
 
+////////////////// CAESAREALABS EDIT //////////////////////
+//////// REASON: See boolean()
+// Minimal declaration of IsDebuggerPresent without including windows.h
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    __declspec(dllimport) int __stdcall IsDebuggerPresent(void);
+
+#ifdef __cplusplus
+}
+#endif
+///////////////////////////////////////////////////////////////
+
 ErrorCode boolean(const Array<Polygon*>& polys1, const Array<Polygon*>& polys2, Operation operation,
                   double scaling, Array<Polygon*>& result) {
+    ////////////////// CAESAREALABS EDIT //////////////////////
+    //////// REASON: boolean() causes a memory error when attaching an lldb windows debugger, so we don't allow it
+    if (IsDebuggerPresent()) {
+        printf("boolean() doesn't work in debug mode, will fail");
+        return ErrorCode::BooleanError;
+    }
+    /////////////////////////////////////////////////////////////
     ClipperLib::ClipType ct_operation = ClipperLib::ctUnion;
     switch (operation) {
         case Operation::Or:

@@ -15,6 +15,10 @@ LICENSE file or <http://www.boost.org/LICENSE_1_0.txt>
 #include <string.h>
 #include <zlib.h>
 
+////////////////// CAESAREALABS EDIT //////////////////////
+//////// REASON: Import for read_gds()
+#include <filesystem>
+///////////////////////////////////////////////////////////
 #include <gdstk/allocator.hpp>
 #include <gdstk/cell.hpp>
 #include <gdstk/flexpath.hpp>
@@ -947,7 +951,10 @@ Library read_gds(const char* filename, double unit, double tolerance, const Set<
 
     FILE* in = fopen(filename, "rb");
     if (in == NULL) {
-        fputs("[GDSTK] Unable to open GDSII file for input.\n", stderr);
+        ////////////////// CAESAREALABS EDIT //////////////////////
+        //////// REASON: Print WHERE gds tried to look for the file, and failed to find it.
+        fprintf(stderr, "[GDSTK] Unable to open GDSII file at %ls%ls%s for input.\n",  std::filesystem::current_path().c_str(),&std::filesystem::path::preferred_separator, filename);
+        ///////////////////////////////////////////////////////////
         if (error_code) *error_code = ErrorCode::InputFileOpenError;
         return library;
     }

@@ -1,5 +1,27 @@
-include(GNUInstallDirs)
+################## CAESAREALABS EDIT ###################
+#### REASON: Make sure c++20 is used otherwise examples don't work.
+set(CMAKE_CXX_STANDARD 20)  # Global C++20 for all targets
+set(CMAKE_CXX_STANDARD_REQUIRED ON)  # Enforce strict compliance
+##############################################################
 
+################## CAESAREALABS EDIT ###################
+#### REASON: Use vcpkg automatically to avoid per-user configuration
+# Enable vcpkg manifest mode if not already defined
+if(NOT DEFINED VCPKG_MANIFEST_MODE)
+    set(VCPKG_MANIFEST_MODE ON CACHE BOOL "Enable vcpkg manifest mode" FORCE)
+endif()
+
+# Always include this before any find_package calls
+if(DEFINED ENV{VCPKG_ROOT})
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
+    message(STATUS "We got vcpkg at $ENV{VCPKG_ROOT}")
+else ()
+    message(STATUS "No vcpkg found - env is '$ENV{VCPKG_ROOT}', good luck")
+endif()
+include("$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+
+##############################################################
+include(GNUInstallDirs)
 find_package(ZLIB 1.2.7)
 if(NOT ZLIB_FOUND)
     # Check first for header files
@@ -86,10 +108,13 @@ target_include_directories(gdstk PUBLIC
     ${ZLIB_INCLUDE_DIRS}
     ${QHULL_INCLUDE_DIRS})
 
+################## CAESAREALABS EDIT ###################
+### REASON: ${ZLIB_LIBRARIES} is deprecated in favor of ZLIB::ZLIB, which works better - the old one fails to build tests
 target_link_libraries(gdstk
-    ${ZLIB_LIBRARIES}
+   ZLIB::ZLIB
     ${QHULL_LIBRARIES}
     clipper)
+#################################################################
 
 if(UNIX)
     target_link_libraries(gdstk m)
