@@ -1,5 +1,7 @@
 ################## CAESAREALABS EDIT ###################
 #### REASON: Make sure c++20 is used otherwise examples don't work.
+#### REASON 2: Build Dynamic Library for JVM
+option(BUILD_SHARED_LIBS "Build shared libraries instead of static ones" ON)
 set(CMAKE_CXX_STANDARD 20)  # Global C++20 for all targets
 set(CMAKE_CXX_STANDARD_REQUIRED ON)  # Enforce strict compliance
 ##############################################################
@@ -116,7 +118,6 @@ target_include_directories(gdstk PUBLIC
 
 ################## CAESAREALABS EDIT ###################
 #### REASON: Add C wrapper headers.
-c_src/library_c.cpp
 # C-compatible headers (exposed to C users)
 target_include_directories(gdstk PUBLIC
         $<BUILD_INTERFACE:${gdstk_SOURCE_DIR}/include/c_include>
@@ -152,5 +153,9 @@ install(
 install(TARGETS gdstk
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gdstk
+        ################## CAESAREALABS EDIT ###################
+        ### REASON: Ensure DLLs are built
+    RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ##########################################################################
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gdstk
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gdstk)
