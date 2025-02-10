@@ -31,6 +31,11 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
     include(CTest)
     add_subdirectory(docs/cpp)
+
+    ################## CAESAREALABS EDIT ###################
+    ### REASON: Add C example code to test C wrapper
+    add_subdirectory(docs/c)
+    ########################################################
 endif()
 
 if(APPLE)

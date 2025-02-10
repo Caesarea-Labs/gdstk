@@ -44,7 +44,7 @@ endif(NOT ZLIB_FOUND)
 
 find_package(Qhull 8 REQUIRED)
 
-set(HEADER_LIST 
+set(HEADER_LIST
     "${gdstk_SOURCE_DIR}/include/gdstk/allocator.hpp"
     "${gdstk_SOURCE_DIR}/include/gdstk/array.hpp"
     "${gdstk_SOURCE_DIR}/include/gdstk/cell.hpp"
@@ -91,7 +91,13 @@ set(SOURCE_LIST
     repetition.cpp
     robustpath.cpp
     style.cpp
-    utils.cpp)
+    utils.cpp
+    ################## CAESAREALABS EDIT ###################
+    #### REASON: Add C wrapper source.
+     c_src/library_c.cpp
+   ##########################################################################
+
+)
 
 add_library(gdstk ${SOURCE_LIST} ${HEADER_LIST})
 
@@ -109,6 +115,15 @@ target_include_directories(gdstk PUBLIC
     ${QHULL_INCLUDE_DIRS})
 
 ################## CAESAREALABS EDIT ###################
+#### REASON: Add C wrapper headers.
+c_src/library_c.cpp
+# C-compatible headers (exposed to C users)
+target_include_directories(gdstk PUBLIC
+        $<BUILD_INTERFACE:${gdstk_SOURCE_DIR}/include/c_include>
+        $<INSTALL_INTERFACE:include/c_include>
+)
+##########################################################################
+################## CAESAREALABS EDIT ###################
 ### REASON: ${ZLIB_LIBRARIES} is deprecated in favor of ZLIB::ZLIB, which works better - the old one fails to build tests
 target_link_libraries(gdstk
    ZLIB::ZLIB
@@ -124,6 +139,15 @@ source_group(
     TREE "${PROJECT_SOURCE_DIR}/include"
     PREFIX "Header Files"
     FILES ${HEADER_LIST})
+
+################## CAESAREALABS EDIT ###################
+### REASON: Install C wrapper headers
+install(
+        DIRECTORY ../include/c_include/
+        DESTINATION include/c_include
+        FILES_MATCHING PATTERN "*.h"
+)
+##########################################################################
 
 install(TARGETS gdstk
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
