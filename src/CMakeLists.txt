@@ -97,6 +97,11 @@ set(SOURCE_LIST
     ################## CAESAREALABS EDIT ###################
     #### REASON: Add C wrapper source.
      c_src/library_c.cpp
+        c_src/cell_c.cpp
+        c_src/polygon_c.cpp
+        c_src/reference_c.cpp
+        c_src/array_c.cpp
+
    ##########################################################################
 
 )
