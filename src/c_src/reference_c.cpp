@@ -10,6 +10,11 @@
 
 using namespace gdstk;
 
+// Internal wrapper structures
+struct GDSTK_Array {
+    Array<void*>* array;
+};
+
 struct GDSTK_Vec2 {
     double x;
     double y;
@@ -43,7 +48,10 @@ extern "C" {
 
 // Constructor and destructor
 GDSTK_Reference* gdstk_reference_create_with_cell(GDSTK_Cell* cell) {
-    if (!cell) return nullptr;
+    if (!cell) {
+        fprintf(stderr, "Warning: gdstk_reference_create_with_cell received null cell parameter\n");
+        return nullptr;
+    }
     auto* wrapper = new GDSTK_Reference;
     wrapper->reference.type = ReferenceType::Cell;
     wrapper->reference.cell = reinterpret_cast<Cell*>(cell);
@@ -51,7 +59,10 @@ GDSTK_Reference* gdstk_reference_create_with_cell(GDSTK_Cell* cell) {
 }
 
 GDSTK_Reference* gdstk_reference_create_with_rawcell(GDSTK_RawCell* rawcell) {
-    if (!rawcell) return nullptr;
+    if (!rawcell) {
+        fprintf(stderr, "Warning: gdstk_reference_create_with_rawcell received null rawcell parameter\n");
+        return nullptr;
+    }
     auto* wrapper = new GDSTK_Reference;
     wrapper->reference.type = ReferenceType::RawCell;
     wrapper->reference.rawcell = reinterpret_cast<RawCell*>(rawcell);
@@ -59,7 +70,10 @@ GDSTK_Reference* gdstk_reference_create_with_rawcell(GDSTK_RawCell* rawcell) {
 }
 
 GDSTK_Reference* gdstk_reference_create_with_name(const char* name) {
-    if (!name) return nullptr;
+    if (!name) {
+        fprintf(stderr, "Warning: gdstk_reference_create_with_name received null name parameter\n");
+        return nullptr;
+    }
     auto* wrapper = new GDSTK_Reference;
     wrapper->reference.type = ReferenceType::Name;
     wrapper->reference.name = copy_string(name, nullptr);
@@ -67,23 +81,30 @@ GDSTK_Reference* gdstk_reference_create_with_name(const char* name) {
 }
 
 void gdstk_reference_free(GDSTK_Reference* reference) {
-    if (reference) {
-        if (reference->reference.type == ReferenceType::Name) {
-            free_allocation(reference->reference.name);
-        }
-        delete reference;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_free received null reference parameter\n");
+        return;
     }
+    if (reference->reference.type == ReferenceType::Name) {
+        free_allocation(reference->reference.name);
+    }
+    delete reference;
 }
 
 void gdstk_reference_clear(GDSTK_Reference* reference) {
-    if (reference) {
-        reference->reference.clear();
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_clear received null reference parameter\n");
+        return;
     }
+    reference->reference.clear();
 }
 
 // Basic properties
 GDSTK_ReferenceType gdstk_reference_get_type(const GDSTK_Reference* reference) {
-    if (!reference) return GDSTK_ReferenceType_Cell;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_get_type received null reference parameter\n");
+        return GDSTK_ReferenceType_Cell;
+    }
     switch (reference->reference.type) {
         case ReferenceType::Cell:
             return GDSTK_ReferenceType_Cell;
@@ -97,83 +118,152 @@ GDSTK_ReferenceType gdstk_reference_get_type(const GDSTK_Reference* reference) {
 }
 
 GDSTK_Cell* gdstk_reference_get_cell(const GDSTK_Reference* reference) {
-    if (!reference || reference->reference.type != ReferenceType::Cell) return nullptr;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_get_cell received null reference parameter\n");
+        return nullptr;
+    }
+    if (reference->reference.type != ReferenceType::Cell) {
+        fprintf(stderr, "Warning: gdstk_reference_get_cell called on non-cell reference\n");
+        return nullptr;
+    }
     return reinterpret_cast<GDSTK_Cell*>(reference->reference.cell);
 }
 
 GDSTK_RawCell* gdstk_reference_get_rawcell(const GDSTK_Reference* reference) {
-    if (!reference || reference->reference.type != ReferenceType::RawCell) return nullptr;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_get_rawcell received null reference parameter\n");
+        return nullptr;
+    }
+    if (reference->reference.type != ReferenceType::RawCell) {
+        fprintf(stderr, "Warning: gdstk_reference_get_rawcell called on non-rawcell reference\n");
+        return nullptr;
+    }
     return reinterpret_cast<GDSTK_RawCell*>(reference->reference.rawcell);
 }
 
 const char* gdstk_reference_get_name(const GDSTK_Reference* reference) {
-    if (!reference || reference->reference.type != ReferenceType::Name) return nullptr;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_get_name received null reference parameter\n");
+        return nullptr;
+    }
+    if (reference->reference.type != ReferenceType::Name) {
+        fprintf(stderr, "Warning: gdstk_reference_get_name called on non-name reference\n");
+        return nullptr;
+    }
     return reference->reference.name;
 }
 
 // Transformation properties
 void gdstk_reference_get_origin(const GDSTK_Reference* reference, GDSTK_Vec2* origin) {
-    if (!reference || !origin) return;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_get_origin received null reference parameter\n");
+        return;
+    }
+    if (!origin) {
+        fprintf(stderr, "Warning: gdstk_reference_get_origin received null origin parameter\n");
+        return;
+    }
     origin->x = reference->reference.origin.x;
     origin->y = reference->reference.origin.y;
 }
 
 void gdstk_reference_set_origin(GDSTK_Reference* reference, const GDSTK_Vec2* origin) {
-    if (!reference || !origin) return;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_set_origin received null reference parameter\n");
+        return;
+    }
+    if (!origin) {
+        fprintf(stderr, "Warning: gdstk_reference_set_origin received null origin parameter\n");
+        return;
+    }
     reference->reference.origin.x = origin->x;
     reference->reference.origin.y = origin->y;
 }
 
 double gdstk_reference_get_rotation(const GDSTK_Reference* reference) {
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_get_rotation received null reference parameter\n");
+    }
     return reference ? reference->reference.rotation : 0.0;
 }
 
 void gdstk_reference_set_rotation(GDSTK_Reference* reference, double rotation) {
-    if (reference) {
-        reference->reference.rotation = rotation;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_set_rotation received null reference parameter\n");
+        return;
     }
+    reference->reference.rotation = rotation;
 }
 
 double gdstk_reference_get_magnification(const GDSTK_Reference* reference) {
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_get_magnification received null reference parameter\n");
+    }
     return reference ? reference->reference.magnification : 1.0;
 }
 
 void gdstk_reference_set_magnification(GDSTK_Reference* reference, double magnification) {
-    if (reference) {
-        reference->reference.magnification = magnification;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_set_magnification received null reference parameter\n");
+        return;
     }
+    reference->reference.magnification = magnification;
 }
 
 int gdstk_reference_get_x_reflection(const GDSTK_Reference* reference) {
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_get_x_reflection received null reference parameter\n");
+    }
     return reference ? (reference->reference.x_reflection ? 1 : 0) : 0;
 }
 
 void gdstk_reference_set_x_reflection(GDSTK_Reference* reference, int x_reflection) {
-    if (reference) {
-        reference->reference.x_reflection = x_reflection != 0;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_set_x_reflection received null reference parameter\n");
+        return;
     }
+    reference->reference.x_reflection = x_reflection != 0;
 }
 
 // Property accessors
 GDSTK_Property* gdstk_reference_get_properties(const GDSTK_Reference* reference) {
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_get_properties received null reference parameter\n");
+    }
     return reference ? reinterpret_cast<GDSTK_Property*>(reference->reference.properties) : nullptr;
 }
 
 void gdstk_reference_set_properties(GDSTK_Reference* reference, GDSTK_Property* properties) {
-    if (reference) {
-        reference->reference.properties = reinterpret_cast<Property*>(properties);
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_set_properties received null reference parameter\n");
+        return;
     }
+    reference->reference.properties = reinterpret_cast<Property*>(properties);
 }
 
 // Copy operations
 void gdstk_reference_copy_from(GDSTK_Reference* dst, const GDSTK_Reference* src) {
-    if (!dst || !src) return;
+    if (!dst) {
+        fprintf(stderr, "Warning: gdstk_reference_copy_from received null destination parameter\n");
+        return;
+    }
+    if (!src) {
+        fprintf(stderr, "Warning: gdstk_reference_copy_from received null source parameter\n");
+        return;
+    }
     dst->reference.copy_from(src->reference);
 }
 
 // Geometry operations
 void gdstk_reference_bounding_box(const GDSTK_Reference* reference, GDSTK_Vec2* min, GDSTK_Vec2* max) {
-    if (!reference || !min || !max) return;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_bounding_box received null reference parameter\n");
+        return;
+    }
+    if (!min || !max) {
+        fprintf(stderr, "Warning: gdstk_reference_bounding_box received null min/max parameter\n");
+        return;
+    }
     Vec2 vmin, vmax;
     reference->reference.bounding_box(vmin, vmax);
     min->x = vmin.x;
@@ -184,7 +274,18 @@ void gdstk_reference_bounding_box(const GDSTK_Reference* reference, GDSTK_Vec2* 
 
 void gdstk_reference_bounding_box_cached(const GDSTK_Reference* reference, GDSTK_Vec2* min, GDSTK_Vec2* max,
                                        GDSTK_Map_GeometryInfo* cache) {
-    if (!reference || !min || !max || !cache) return;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_bounding_box_cached received null reference parameter\n");
+        return;
+    }
+    if (!min || !max) {
+        fprintf(stderr, "Warning: gdstk_reference_bounding_box_cached received null min/max parameter\n");
+        return;
+    }
+    if (!cache) {
+        fprintf(stderr, "Warning: gdstk_reference_bounding_box_cached received null cache parameter\n");
+        return;
+    }
     Vec2 vmin, vmax;
     reference->reference.bounding_box(vmin, vmax, cache->map);
     min->x = vmin.x;
@@ -194,7 +295,14 @@ void gdstk_reference_bounding_box_cached(const GDSTK_Reference* reference, GDSTK
 }
 
 void gdstk_reference_convex_hull(const GDSTK_Reference* reference, struct GDSTK_Array* result) {
-    if (!reference || !result) return;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_convex_hull received null reference parameter\n");
+        return;
+    }
+    if (!result) {
+        fprintf(stderr, "Warning: gdstk_reference_convex_hull received null result parameter\n");
+        return;
+    }
     Array<Vec2> temp_array;
     reference->reference.convex_hull(temp_array);
     
@@ -207,7 +315,18 @@ void gdstk_reference_convex_hull(const GDSTK_Reference* reference, struct GDSTK_
 
 void gdstk_reference_convex_hull_cached(const GDSTK_Reference* reference, struct GDSTK_Array* result,
                                       GDSTK_Map_GeometryInfo* cache) {
-    if (!reference || !result || !cache) return;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_convex_hull_cached received null reference parameter\n");
+        return;
+    }
+    if (!result) {
+        fprintf(stderr, "Warning: gdstk_reference_convex_hull_cached received null result parameter\n");
+        return;
+    }
+    if (!cache) {
+        fprintf(stderr, "Warning: gdstk_reference_convex_hull_cached received null cache parameter\n");
+        return;
+    }
     Array<Vec2> temp_array;
     reference->reference.convex_hull(temp_array, cache->map);
     
@@ -221,26 +340,38 @@ void gdstk_reference_convex_hull_cached(const GDSTK_Reference* reference, struct
 // Transformation operations
 void gdstk_reference_transform(GDSTK_Reference* reference, double magnification, int x_reflection,
                              double rotation, const GDSTK_Vec2* origin) {
-    if (!reference || !origin) return;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_transform received null reference parameter\n");
+        return;
+    }
+    if (!origin) {
+        fprintf(stderr, "Warning: gdstk_reference_transform received null origin parameter\n");
+        return;
+    }
     reference->reference.transform(magnification, x_reflection != 0, rotation, {origin->x, origin->y});
 }
 
 void gdstk_reference_apply_repetition(GDSTK_Reference* reference, struct GDSTK_Array* result) {
-    if (!reference || !result) return;
-    Array<Reference*> temp_array;
-    reference->reference.apply_repetition(temp_array);
-    
-    // Convert temp_array to GDSTK_Array
-    for (uint64_t i = 0; i < temp_array.count; i++) {
-        auto* ref_wrapper = new GDSTK_Reference;
-        ref_wrapper->reference = *temp_array[i];
-        gdstk_array_append(result, &ref_wrapper);
-        delete temp_array[i];
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_apply_repetition received null reference parameter\n");
+        return;
     }
+    if (!result) {
+        fprintf(stderr, "Warning: gdstk_reference_apply_repetition received null result parameter\n");
+        return;
+    }
+    reference->reference.apply_repetition(reinterpret_cast<Array<Reference*>&>(*result->array));
 }
 
 void gdstk_reference_repeat_and_transform(const GDSTK_Reference* reference, struct GDSTK_Array* point_array) {
-    if (!reference || !point_array) return;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_repeat_and_transform received null reference parameter\n");
+        return;
+    }
+    if (!point_array) {
+        fprintf(stderr, "Warning: gdstk_reference_repeat_and_transform received null point_array parameter\n");
+        return;
+    }
     Array<Vec2> temp_array;
     reference->reference.repeat_and_transform(temp_array);
     
@@ -255,56 +386,59 @@ void gdstk_reference_repeat_and_transform(const GDSTK_Reference* reference, stru
 void gdstk_reference_get_polygons(const GDSTK_Reference* reference, int apply_repetitions,
                                  int include_paths, int64_t depth, int filter, int tag,
                                  struct GDSTK_Array* result) {
-    if (!reference || !result) return;
-    Array<Polygon*> temp_array;
-    reference->reference.get_polygons(apply_repetitions != 0, include_paths != 0, depth,
-                                    filter != 0, tag, temp_array);
-    
-    // Convert temp_array to GDSTK_Array
-    for (uint64_t i = 0; i < temp_array.count; i++) {
-        auto* poly_wrapper = new GDSTK_Polygon;
-        poly_wrapper->polygon = *temp_array[i];
-        gdstk_array_append(result, &poly_wrapper);
-        delete temp_array[i];
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_get_polygons received null reference parameter\n");
+        return;
     }
+    if (!result) {
+        fprintf(stderr, "Warning: gdstk_reference_get_polygons received null result parameter\n");
+        return;
+    }
+    reference->reference.get_polygons(apply_repetitions != 0, include_paths != 0, depth,
+                                    filter != 0, tag, reinterpret_cast<Array<Polygon*>&>(*result->array));
 }
 
 void gdstk_reference_get_flexpaths(const GDSTK_Reference* reference, int apply_repetitions,
                                   int64_t depth, int filter, int tag,
                                   struct GDSTK_Array* result) {
-    if (!reference || !result) return;
-    Array<FlexPath*> temp_array;
-    reference->reference.get_flexpaths(apply_repetitions != 0, depth, filter != 0, tag, temp_array);
-    
-    // Convert temp_array to GDSTK_Array
-    for (uint64_t i = 0; i < temp_array.count; i++) {
-        auto* path_wrapper = new GDSTK_FlexPath;
-        path_wrapper->flexpath = *temp_array[i];
-        gdstk_array_append(result, &path_wrapper);
-        delete temp_array[i];
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_get_flexpaths received null reference parameter\n");
+        return;
     }
+    if (!result) {
+        fprintf(stderr, "Warning: gdstk_reference_get_flexpaths received null result parameter\n");
+        return;
+    }
+    reference->reference.get_flexpaths(apply_repetitions != 0, depth, filter != 0, tag,
+                                     reinterpret_cast<Array<FlexPath*>&>(*result->array));
 }
 
 void gdstk_reference_get_robustpaths(const GDSTK_Reference* reference, int apply_repetitions,
                                     int64_t depth, int filter, int tag,
                                     struct GDSTK_Array* result) {
-    if (!reference || !result) return;
-    Array<RobustPath*> temp_array;
-    reference->reference.get_robustpaths(apply_repetitions != 0, depth, filter != 0, tag, temp_array);
-    
-    // Convert temp_array to GDSTK_Array
-    for (uint64_t i = 0; i < temp_array.count; i++) {
-        auto* path_wrapper = new GDSTK_RobustPath;
-        path_wrapper->robustpath = *temp_array[i];
-        gdstk_array_append(result, &path_wrapper);
-        delete temp_array[i];
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_get_robustpaths received null reference parameter\n");
+        return;
     }
+    if (!result) {
+        fprintf(stderr, "Warning: gdstk_reference_get_robustpaths received null result parameter\n");
+        return;
+    }
+    reference->reference.get_robustpaths(apply_repetitions != 0, depth, filter != 0, tag,
+                                       reinterpret_cast<Array<RobustPath*>&>(*result->array));
 }
 
 void gdstk_reference_get_labels(const GDSTK_Reference* reference, int apply_repetitions,
                                int64_t depth, int filter, int tag,
                                struct GDSTK_Array* result) {
-    if (!reference || !result) return;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_get_labels received null reference parameter\n");
+        return;
+    }
+    if (!result) {
+        fprintf(stderr, "Warning: gdstk_reference_get_labels received null result parameter\n");
+        return;
+    }
     Array<Label*> temp_array;
     reference->reference.get_labels(apply_repetitions != 0, depth, filter != 0, tag, temp_array);
     
@@ -319,14 +453,28 @@ void gdstk_reference_get_labels(const GDSTK_Reference* reference, int apply_repe
 
 // File output
 int gdstk_reference_to_gds(const GDSTK_Reference* reference, FILE* out, double scaling) {
-    if (!reference || !out) return -1;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_to_gds received null reference parameter\n");
+        return -1;
+    }
+    if (!out) {
+        fprintf(stderr, "Warning: gdstk_reference_to_gds received null output file parameter\n");
+        return -1;
+    }
     ErrorCode result = reference->reference.to_gds(out, scaling);
     return result == ErrorCode::NoError ? 0 : -1;
 }
 
 int gdstk_reference_to_svg(const GDSTK_Reference* reference, FILE* out, double scaling,
                           uint32_t precision) {
-    if (!reference || !out) return -1;
+    if (!reference) {
+        fprintf(stderr, "Warning: gdstk_reference_to_svg received null reference parameter\n");
+        return -1;
+    }
+    if (!out) {
+        fprintf(stderr, "Warning: gdstk_reference_to_svg received null output file parameter\n");
+        return -1;
+    }
     ErrorCode result = reference->reference.to_svg(out, scaling, precision);
     return result == ErrorCode::NoError ? 0 : -1;
 }

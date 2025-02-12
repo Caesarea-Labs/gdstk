@@ -65,6 +65,15 @@ foreach(EXAMPLE ${ALL_EXAMPLES})
                 $<TARGET_FILE_DIR:${EXAMPLE}>
                 COMMAND ${CMAKE_COMMAND} -E echo "Finished copying qhull_r.dll"
         )
+
+        # Echo and copy gdstk.dll
+        add_custom_command(TARGET ${EXAMPLE} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E echo "Copying gdstk.dll from $<TARGET_FILE_DIR:gdstk>/gdstk.dll to $<TARGET_FILE_DIR:${EXAMPLE}>"
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "$<TARGET_FILE_DIR:gdstk>/gdstk.dll"
+                $<TARGET_FILE_DIR:${EXAMPLE}>
+                COMMAND ${CMAKE_COMMAND} -E echo "Finished copying gdstk.dll"
+        )
     endif()
     ############################################################################
 endforeach()

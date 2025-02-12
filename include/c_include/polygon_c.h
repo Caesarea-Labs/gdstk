@@ -12,6 +12,48 @@ extern "C" {
 // Forward declarations
 typedef struct GDSTK_Polygon GDSTK_Polygon;
 typedef struct GDSTK_Vec2 GDSTK_Vec2;
+typedef struct GDSTK_PropertyValue GDSTK_PropertyValue;
+
+// Property value type enum
+typedef enum {
+    GDSTK_PropertyType_UnsignedInteger = 0,
+    GDSTK_PropertyType_Integer = 1,
+    GDSTK_PropertyType_Real = 2,
+    GDSTK_PropertyType_String = 3
+} GDSTK_PropertyType;
+
+// Field getters
+GDSTK_API uint64_t gdstk_polygon_get_tag(const GDSTK_Polygon* polygon);
+GDSTK_API uint64_t gdstk_polygon_point_array_count(const GDSTK_Polygon* polygon);
+GDSTK_API void gdstk_polygon_get_point_array(const GDSTK_Polygon* polygon, GDSTK_Vec2* points, uint64_t count);
+GDSTK_API void* gdstk_polygon_get_owner(const GDSTK_Polygon* polygon);
+
+// Repetition getters
+GDSTK_API int gdstk_polygon_get_repetition_type(const GDSTK_Polygon* polygon);
+GDSTK_API uint64_t gdstk_polygon_get_repetition_columns(const GDSTK_Polygon* polygon);
+GDSTK_API uint64_t gdstk_polygon_get_repetition_rows(const GDSTK_Polygon* polygon);
+GDSTK_API void gdstk_polygon_get_repetition_spacing(const GDSTK_Polygon* polygon, GDSTK_Vec2* spacing);
+GDSTK_API void gdstk_polygon_get_repetition_v1(const GDSTK_Polygon* polygon, GDSTK_Vec2* v1);
+GDSTK_API void gdstk_polygon_get_repetition_v2(const GDSTK_Polygon* polygon, GDSTK_Vec2* v2);
+GDSTK_API uint64_t gdstk_polygon_get_repetition_offsets_count(const GDSTK_Polygon* polygon);
+GDSTK_API void gdstk_polygon_get_repetition_offsets(const GDSTK_Polygon* polygon, GDSTK_Vec2* offsets, uint64_t count);
+GDSTK_API uint64_t gdstk_polygon_get_repetition_coords_count(const GDSTK_Polygon* polygon);
+GDSTK_API void gdstk_polygon_get_repetition_coords(const GDSTK_Polygon* polygon, double* coords, uint64_t count);
+GDSTK_API uint64_t gdstk_polygon_repetition_get_count(const GDSTK_Polygon* polygon);
+
+// Property getters
+GDSTK_API GDSTK_PropertyValue* gdstk_polygon_get_property(const GDSTK_Polygon* polygon, const char* name);
+GDSTK_API GDSTK_PropertyValue* gdstk_polygon_get_gds_property(const GDSTK_Polygon* polygon, uint16_t attribute);
+
+// Property value getters
+GDSTK_API GDSTK_PropertyType gdstk_property_value_get_type(const GDSTK_PropertyValue* property);
+GDSTK_API uint64_t gdstk_property_value_get_unsigned_integer(const GDSTK_PropertyValue* property);
+GDSTK_API int64_t gdstk_property_value_get_integer(const GDSTK_PropertyValue* property);
+GDSTK_API double gdstk_property_value_get_real(const GDSTK_PropertyValue* property);
+GDSTK_API uint64_t gdstk_property_value_get_string_length(const GDSTK_PropertyValue* property);
+GDSTK_API void gdstk_property_value_get_string(const GDSTK_PropertyValue* property, char* buffer, uint64_t buffer_size);
+GDSTK_API GDSTK_PropertyValue* gdstk_property_value_get_next(const GDSTK_PropertyValue* property);
+GDSTK_API void gdstk_property_value_free(GDSTK_PropertyValue* property);
 
 // Constructor and destructor
 /**

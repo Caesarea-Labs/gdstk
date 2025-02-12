@@ -4,6 +4,12 @@
 option(BUILD_SHARED_LIBS "Build shared libraries instead of static ones" ON)
 set(CMAKE_CXX_STANDARD 20)  # Global C++20 for all targets
 set(CMAKE_CXX_STANDARD_REQUIRED ON)  # Enforce strict compliance
+
+# REQUIRED FOR DLL SUPPORT
+if(WIN32)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    add_definitions(-DGDSTK_SHARED_LIBRARY)
+endif()
 ##############################################################
 
 ################## CAESAREALABS EDIT ###################

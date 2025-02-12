@@ -9,6 +9,7 @@ struct GDSTK_Array {
     gdstk::Array<void*>* array;
 };
 
+
 extern "C" {
 
 GDSTK_Array* gdstk_array_create(int unused) {
@@ -18,31 +19,53 @@ GDSTK_Array* gdstk_array_create(int unused) {
 }
 
 void gdstk_array_free(GDSTK_Array* array) {
-    if (!array) return;
+    if (!array) {
+        fprintf(stderr, "Warning: gdstk_array_free received null array parameter\n");
+        return;
+    }
     delete array->array;
     delete array;
 }
 
 void gdstk_array_clear(GDSTK_Array* array) {
-    if (!array) return;
+    if (!array) {
+        fprintf(stderr, "Warning: gdstk_array_clear received null array parameter\n");
+        return;
+    }
     array->array->clear();
 }
 
 void gdstk_array_print(const GDSTK_Array* array, int all) {
-    if (!array) return;
+    if (!array) {
+        fprintf(stderr, "Warning: gdstk_array_print received null array parameter\n");
+        return;
+    }
     array->array->print(all != 0);
 }
 
 uint64_t gdstk_array_count(const GDSTK_Array* array) {
+    if (!array) {
+        fprintf(stderr, "Warning: gdstk_array_count received null array parameter\n");
+    }
     return array ? array->array->count : 0;
 }
 
 uint64_t gdstk_array_capacity(const GDSTK_Array* array) {
+    if (!array) {
+        fprintf(stderr, "Warning: gdstk_array_capacity received null array parameter\n");
+    }
     return array ? array->array->capacity : 0;
 }
 
 void* gdstk_array_get(GDSTK_Array* array, uint64_t index) {
-    if (!array || index >= array->array->count) return nullptr;
+    if (!array) {
+        fprintf(stderr, "Warning: gdstk_array_get received null array parameter\n");
+        return nullptr;
+    }
+    if (index >= array->array->count) {
+        fprintf(stderr, "Warning: gdstk_array_get index out of bounds\n");
+        return nullptr;
+    }
     return array->array->items[index];
 }
 
@@ -74,34 +97,76 @@ void gdstk_array_copy_from(GDSTK_Array* dst, const GDSTK_Array* src) {
 }
 
 void gdstk_array_extend(GDSTK_Array* array, const GDSTK_Array* src) {
-    if (!array || !src) return;
+    if (!array) {
+        fprintf(stderr, "Warning: gdstk_array_extend received null destination array parameter\n");
+        return;
+    }
+    if (!src) {
+        fprintf(stderr, "Warning: gdstk_array_extend received null source array parameter\n");
+        return;
+    }
     for (uint64_t i = 0; i < src->array->count; i++) {
         array->array->append(src->array->items[i]);
     }
 }
 
 int gdstk_array_contains(const GDSTK_Array* array, const void* item) {
-    if (!array || !item) return 0;
+    if (!array) {
+        fprintf(stderr, "Warning: gdstk_array_contains received null array parameter\n");
+        return 0;
+    }
+    if (!item) {
+        fprintf(stderr, "Warning: gdstk_array_contains received null item parameter\n");
+        return 0;
+    }
     return array->array->contains(const_cast<void*>(item));
 }
 
 uint64_t gdstk_array_index(const GDSTK_Array* array, const void* item) {
-    if (!array || !item) return gdstk_array_count(array);
+    if (!array) {
+        fprintf(stderr, "Warning: gdstk_array_index received null array parameter\n");
+        return gdstk_array_count(array);
+    }
+    if (!item) {
+        fprintf(stderr, "Warning: gdstk_array_index received null item parameter\n");
+        return gdstk_array_count(array);
+    }
     return array->array->index(const_cast<void*>(item));
 }
 
 void gdstk_array_remove(GDSTK_Array* array, uint64_t index) {
-    if (!array || index >= array->array->count) return;
+    if (!array) {
+        fprintf(stderr, "Warning: gdstk_array_remove received null array parameter\n");
+        return;
+    }
+    if (index >= array->array->count) {
+        fprintf(stderr, "Warning: gdstk_array_remove index out of bounds\n");
+        return;
+    }
     array->array->remove(index);
 }
 
 void gdstk_array_remove_unordered(GDSTK_Array* array, uint64_t index) {
-    if (!array || index >= array->array->count) return;
+    if (!array) {
+        fprintf(stderr, "Warning: gdstk_array_remove_unordered received null array parameter\n");
+        return;
+    }
+    if (index >= array->array->count) {
+        fprintf(stderr, "Warning: gdstk_array_remove_unordered index out of bounds\n");
+        return;
+    }
     array->array->remove_unordered(index);
 }
 
 int gdstk_array_remove_item(GDSTK_Array* array, const void* item) {
-    if (!array || !item) return 0;
+    if (!array) {
+        fprintf(stderr, "Warning: gdstk_array_remove_item received null array parameter\n");
+        return 0;
+    }
+    if (!item) {
+        fprintf(stderr, "Warning: gdstk_array_remove_item received null item parameter\n");
+        return 0;
+    }
     uint64_t index = gdstk_array_index(array, item);
     if (index < gdstk_array_count(array)) {
         gdstk_array_remove(array, index);
