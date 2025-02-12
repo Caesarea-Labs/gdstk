@@ -12,9 +12,6 @@
 using namespace gdstk;
 
 // Internal wrapper structures
-struct GDSTK_Array {
-    gdstk::Array<void*>* array;
-};
 
 struct GDSTK_Library {
     Library lib;
@@ -542,23 +539,22 @@ double gdstk_library_info_get_precision(const GDSTK_LibraryInfo* info) {
 }
 
 // Top level cell retrieval
-void gdstk_library_get_top_level(const GDSTK_Library* library, struct GDSTK_Array* top_cells,
-                                struct GDSTK_Array* top_rawcells) {
+void gdstk_library_get_top_level(const GDSTK_Library* library, GDSTK_Array top_cells,
+                                GDSTK_Array top_rawcells) {
     if (!library) {
         fprintf(stderr, "Warning: gdstk_library_get_top_level received null library parameter\n");
         return;
     }
-    if (!top_cells) {
+    if (!top_cells.array) {
         fprintf(stderr, "Warning: gdstk_library_get_top_level received null top_cells parameter\n");
         return;
     }
-    if (!top_rawcells) {
+    if (!top_rawcells.array) {
         fprintf(stderr, "Warning: gdstk_library_get_top_level received null top_rawcells parameter\n");
         return;
     }
-
-    library->lib.top_level(*reinterpret_cast<gdstk::Array<Cell*>*>(top_cells->array),
-                          *reinterpret_cast<gdstk::Array<RawCell*>*>(top_rawcells->array));
+    library->lib.top_level(*static_cast<Array<Cell*>*>(top_cells.array),
+                          *static_cast<Array<RawCell*>*>(top_rawcells.array));
 }
 
 // Cell replacement functions

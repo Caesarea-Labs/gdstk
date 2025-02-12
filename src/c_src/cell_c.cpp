@@ -1,11 +1,12 @@
 #include "cell_c.h"
+
+#include "array_c.h"
+#include "gdstk/array.hpp"
 #include "gdstk/cell.hpp"
 #include "gdstk/map.hpp"
 #include "gdstk/set.hpp"
 #include "gdstk/style.hpp"
 #include "gdstk/tagmap.hpp"
-#include "array_c.h"
-#include "gdstk/array.hpp"
 
 using namespace gdstk;
 
@@ -23,9 +24,6 @@ struct GDSTK_Map_RawCell {
 
 struct GDSTK_Set_Tag {
     Set<Tag> set;
-};
-struct GDSTK_Array {
-    gdstk::Array<void*>* array;
 };
 
 extern "C" {
@@ -79,67 +77,92 @@ void gdstk_cell_set_name(GDSTK_Cell* cell, const char* name) {
 }
 
 // Array accessors
-uint64_t gdstk_cell_polygon_count(const GDSTK_Cell* cell) {
+// uint64_t gdstk_cell_polygon_count(const GDSTK_Cell* cell) {
+//     if (!cell) {
+//         fprintf(stderr, "Warning: gdstk_cell_polygon_count received null cell parameter\n");
+//     }
+//     return cell ? cell->cell.polygon_array.count : 0;
+// }
+//
+// GDSTK_Polygon* gdstk_cell_get_polygon(const GDSTK_Cell* cell, uint64_t index) {
+//     if (!cell) {
+//         fprintf(stderr, "Warning: gdstk_cell_get_polygon received null cell parameter\n");
+//         return nullptr;
+//     }
+//     if (index >= cell->cell.polygon_array.count) {
+//         fprintf(stderr, "Warning: gdstk_cell_get_polygon index out of bounds\n");
+//         return nullptr;
+//     }
+//     return reinterpret_cast<GDSTK_Polygon*>(cell->cell.polygon_array[index]);
+// }
+//
+// void gdstk_cell_add_polygon(GDSTK_Cell* cell, GDSTK_Polygon* polygon) {
+//     if (!cell) {
+//         fprintf(stderr, "Warning: gdstk_cell_add_polygon received null cell parameter\n");
+//         return;
+//     }
+//     if (!polygon) {
+//         fprintf(stderr, "Warning: gdstk_cell_add_polygon received null polygon parameter\n");
+//         return;
+//     }
+//     cell->cell.polygon_array.append(reinterpret_cast<Polygon*>(polygon));
+// }
+// GDSTK_Array gdstk_cell_get_polygons(const GDSTK_Cell* cell, int8_t apply_repetitions, int8_t include_paths, int64_t depth, int8_t filter, ) {
+//     if (!cell) {
+//         fprintf(stderr, "Warning: gdstk_cell_get_references received null cell parameter\n");
+//         constexpr GDSTK_Array array = {nullptr};
+//         return array;
+//     }
+//
+//     cell->cell.get_polygons()
+//
+//     const GDSTK_Array array = {const_cast<Array<Polygon*>*>(&cell->cell.polygon_array)};
+//     return array;
+// }
+
+// bool apply_repetitions, bool include_paths, ,
+// Tag tag, Array<Polygon*>&result 
+GDSTK_Array gdstk_cell_get_references(const GDSTK_Cell* cell) {
     if (!cell) {
-        fprintf(stderr, "Warning: gdstk_cell_polygon_count received null cell parameter\n");
+        fprintf(stderr, "Warning: gdstk_cell_get_references received null cell parameter\n");
+        constexpr GDSTK_Array array = {nullptr};
+        return array;
     }
-    return cell ? cell->cell.polygon_array.count : 0;
+
+    const GDSTK_Array array = {const_cast<Array<Reference*>*>(&cell->cell.reference_array)};
+    return array;
 }
 
-GDSTK_Polygon* gdstk_cell_get_polygon(const GDSTK_Cell* cell, uint64_t index) {
-    if (!cell) {
-        fprintf(stderr, "Warning: gdstk_cell_get_polygon received null cell parameter\n");
-        return nullptr;
-    }
-    if (index >= cell->cell.polygon_array.count) {
-        fprintf(stderr, "Warning: gdstk_cell_get_polygon index out of bounds\n");
-        return nullptr;
-    }
-    return reinterpret_cast<GDSTK_Polygon*>(cell->cell.polygon_array[index]);
-}
-
-void gdstk_cell_add_polygon(GDSTK_Cell* cell, GDSTK_Polygon* polygon) {
-    if (!cell) {
-        fprintf(stderr, "Warning: gdstk_cell_add_polygon received null cell parameter\n");
-        return;
-    }
-    if (!polygon) {
-        fprintf(stderr, "Warning: gdstk_cell_add_polygon received null polygon parameter\n");
-        return;
-    }
-    cell->cell.polygon_array.append(reinterpret_cast<Polygon*>(polygon));
-}
-
-uint64_t gdstk_cell_reference_count(const GDSTK_Cell* cell) {
-    if (!cell) {
-        fprintf(stderr, "Warning: gdstk_cell_reference_count received null cell parameter\n");
-    }
-    return cell ? cell->cell.reference_array.count : 0;
-}
-
-GDSTK_Reference* gdstk_cell_get_reference(const GDSTK_Cell* cell, uint64_t index) {
-    if (!cell) {
-        fprintf(stderr, "Warning: gdstk_cell_get_reference received null cell parameter\n");
-        return nullptr;
-    }
-    if (index >= cell->cell.reference_array.count) {
-        fprintf(stderr, "Warning: gdstk_cell_get_reference index out of bounds\n");
-        return nullptr;
-    }
-    return reinterpret_cast<GDSTK_Reference*>(cell->cell.reference_array[index]);
-}
-
-void gdstk_cell_add_reference(GDSTK_Cell* cell, GDSTK_Reference* reference) {
-    if (!cell) {
-        fprintf(stderr, "Warning: gdstk_cell_add_reference received null cell parameter\n");
-        return;
-    }
-    if (!reference) {
-        fprintf(stderr, "Warning: gdstk_cell_add_reference received null reference parameter\n");
-        return;
-    }
-    cell->cell.reference_array.append(reinterpret_cast<Reference*>(reference));
-}
+// uint64_t gdstk_cell_reference_count(const GDSTK_Cell* cell) {
+//     if (!cell) {
+//         fprintf(stderr, "Warning: gdstk_cell_reference_count received null cell parameter\n");
+//     }
+//     return cell ? cell->cell.reference_array.count : 0;
+// }
+//
+// GDSTK_Reference* gdstk_cell_get_reference(const GDSTK_Cell* cell, uint64_t index) {
+//     if (!cell) {
+//         fprintf(stderr, "Warning: gdstk_cell_get_reference received null cell parameter\n");
+//         return nullptr;
+//     }
+//     if (index >= cell->cell.reference_array.count) {
+//         fprintf(stderr, "Warning: gdstk_cell_get_reference index out of bounds\n");
+//         return nullptr;
+//     }
+//     return reinterpret_cast<GDSTK_Reference*>(cell->cell.reference_array[index]);
+// }
+//
+// void gdstk_cell_add_reference(GDSTK_Cell* cell, GDSTK_Reference* reference) {
+//     if (!cell) {
+//         fprintf(stderr, "Warning: gdstk_cell_add_reference received null cell parameter\n");
+//         return;
+//     }
+//     if (!reference) {
+//         fprintf(stderr, "Warning: gdstk_cell_add_reference received null reference parameter\n");
+//         return;
+//     }
+//     cell->cell.reference_array.append(reinterpret_cast<Reference*>(reference));
+// }
 
 uint64_t gdstk_cell_flexpath_count(const GDSTK_Cell* cell) {
     if (!cell) {
@@ -266,21 +289,21 @@ void gdstk_cell_get_bounding_box(const GDSTK_Cell* cell, GDSTK_Vec2* min, GDSTK_
     *reinterpret_cast<Vec2*>(max) = vmax;
 }
 
-void gdstk_cell_get_convex_hull(const GDSTK_Cell* cell, GDSTK_Array* result) {
+void gdstk_cell_get_convex_hull(const GDSTK_Cell* cell, GDSTK_Array result) {
     if (!cell) {
         fprintf(stderr, "Warning: gdstk_cell_get_convex_hull received null cell parameter\n");
         return;
     }
-    if (!result) {
+    if (!result.array) {
         fprintf(stderr, "Warning: gdstk_cell_get_convex_hull received null result parameter\n");
         return;
     }
-    Array<Vec2>& hull = reinterpret_cast<Array<Vec2>&>(*result->array);
-    cell->cell.convex_hull(hull);
+    cell->cell.convex_hull(*reinterpret_cast<Array<Vec2>*>(result.array));
 }
 
 // Copy operations
-void gdstk_cell_copy_from(GDSTK_Cell* dst, const GDSTK_Cell* src, const char* new_name, int deep_copy) {
+void gdstk_cell_copy_from(GDSTK_Cell* dst, const GDSTK_Cell* src, const char* new_name,
+                          int deep_copy) {
     if (!dst) {
         fprintf(stderr, "Warning: gdstk_cell_copy_from received null destination parameter\n");
         return;
@@ -294,59 +317,59 @@ void gdstk_cell_copy_from(GDSTK_Cell* dst, const GDSTK_Cell* src, const char* ne
 
 // Element retrieval
 void gdstk_cell_get_polygons(const GDSTK_Cell* cell, int apply_repetitions, int include_paths,
-                            int64_t depth, int filter, int tag, GDSTK_Array* result) {
+                             int64_t depth, int filter, Tag tag, GDSTK_Array result) {
     if (!cell) {
         fprintf(stderr, "Warning: gdstk_cell_get_polygons received null cell parameter\n");
         return;
     }
-    if (!result) {
+    if (!result.array) {
         fprintf(stderr, "Warning: gdstk_cell_get_polygons received null result parameter\n");
         return;
     }
-    Array<Polygon*>& poly_array = reinterpret_cast<Array<Polygon*>&>(*result->array);
-    cell->cell.get_polygons(apply_repetitions != 0, include_paths != 0, depth, filter != 0, tag, poly_array);
+    cell->cell.get_polygons(apply_repetitions != 0, include_paths != 0, depth, filter != 0, tag,
+                            *static_cast<Array<Polygon*>*>(result.array));
 }
 
 void gdstk_cell_get_flexpaths(const GDSTK_Cell* cell, int apply_repetitions, int64_t depth,
-                             int filter, int tag, GDSTK_Array* result) {
+                              int filter, Tag tag, GDSTK_Array result) {
     if (!cell) {
         fprintf(stderr, "Warning: gdstk_cell_get_flexpaths received null cell parameter\n");
         return;
     }
-    if (!result) {
+    if (!result.array) {
         fprintf(stderr, "Warning: gdstk_cell_get_flexpaths received null result parameter\n");
         return;
     }
-    Array<FlexPath*>& path_array = reinterpret_cast<Array<FlexPath*>&>(*result->array);
-    cell->cell.get_flexpaths(apply_repetitions != 0, depth, filter != 0, tag, path_array);
+    cell->cell.get_flexpaths(apply_repetitions != 0, depth, filter != 0, tag,
+                             *reinterpret_cast<Array<FlexPath*>*>(result.array));
 }
 
 void gdstk_cell_get_robustpaths(const GDSTK_Cell* cell, int apply_repetitions, int64_t depth,
-                               int filter, int tag, GDSTK_Array* result) {
+                                int filter, Tag tag, GDSTK_Array result) {
     if (!cell) {
         fprintf(stderr, "Warning: gdstk_cell_get_robustpaths received null cell parameter\n");
         return;
     }
-    if (!result) {
+    if (!result.array) {
         fprintf(stderr, "Warning: gdstk_cell_get_robustpaths received null result parameter\n");
         return;
     }
-    Array<RobustPath*>& path_array = reinterpret_cast<Array<RobustPath*>&>(*result->array);
-    cell->cell.get_robustpaths(apply_repetitions != 0, depth, filter != 0, tag, path_array);
+    cell->cell.get_robustpaths(apply_repetitions != 0, depth, filter != 0, tag,
+                               *reinterpret_cast<Array<RobustPath*>*>(result.array));
 }
 
-void gdstk_cell_get_labels(const GDSTK_Cell* cell, int apply_repetitions, int64_t depth,
-                          int filter, int tag, GDSTK_Array* result) {
+void gdstk_cell_get_labels(const GDSTK_Cell* cell, int apply_repetitions, int64_t depth, int filter,
+                           Tag tag, GDSTK_Array result) {
     if (!cell) {
         fprintf(stderr, "Warning: gdstk_cell_get_labels received null cell parameter\n");
         return;
     }
-    if (!result) {
+    if (!result.array) {
         fprintf(stderr, "Warning: gdstk_cell_get_labels received null result parameter\n");
         return;
     }
-    Array<Label*>& label_array = reinterpret_cast<Array<Label*>&>(*result->array);
-    cell->cell.get_labels(apply_repetitions != 0, depth, filter != 0, tag, label_array);
+    cell->cell.get_labels(apply_repetitions != 0, depth, filter != 0, tag,
+                          *reinterpret_cast<Array<Label*>*>(result.array));
 }
 
 // Dependency management
@@ -363,13 +386,15 @@ void gdstk_cell_get_dependencies(const GDSTK_Cell* cell, int recursive, GDSTK_Ma
     cell->cell.get_dependencies(recursive != 0, cell_map);
 }
 
-void gdstk_cell_get_raw_dependencies(const GDSTK_Cell* cell, int recursive, GDSTK_Map_RawCell* result) {
+void gdstk_cell_get_raw_dependencies(const GDSTK_Cell* cell, int recursive,
+                                     GDSTK_Map_RawCell* result) {
     if (!cell) {
         fprintf(stderr, "Warning: gdstk_cell_get_raw_dependencies received null cell parameter\n");
         return;
     }
     if (!result) {
-        fprintf(stderr, "Warning: gdstk_cell_get_raw_dependencies received null result parameter\n");
+        fprintf(stderr,
+                "Warning: gdstk_cell_get_raw_dependencies received null result parameter\n");
         return;
     }
     Map<RawCell*>& raw_map = reinterpret_cast<Map<RawCell*>&>(result->map);
@@ -417,17 +442,17 @@ void gdstk_cell_remap_tags(GDSTK_Cell* cell, const GDSTK_TagMap* map) {
 }
 
 // Cell operations
-void gdstk_cell_flatten(GDSTK_Cell* cell, int apply_repetitions, GDSTK_Array* removed_references) {
+void gdstk_cell_flatten(GDSTK_Cell* cell, int apply_repetitions, GDSTK_Array removed_references) {
     if (!cell) {
         fprintf(stderr, "Warning: gdstk_cell_flatten received null cell parameter\n");
         return;
     }
-    if (!removed_references) {
+    if (!removed_references.array) {
         fprintf(stderr, "Warning: gdstk_cell_flatten received null removed_references parameter\n");
         return;
     }
-    Array<Reference*>& ref_array = reinterpret_cast<Array<Reference*>&>(*removed_references->array);
-    cell->cell.flatten(apply_repetitions != 0, ref_array);
+    cell->cell.flatten(apply_repetitions != 0,
+                       *reinterpret_cast<Array<Reference*>*>(removed_references.array));
 }
 
 // File output
@@ -458,8 +483,9 @@ int gdstk_cell_to_svg(const GDSTK_Cell* cell, FILE* out, double scaling, uint32_
 }
 
 int gdstk_cell_write_svg(const GDSTK_Cell* cell, const char* filename, double scaling,
-                        uint32_t precision, GDSTK_StyleMap* shape_style, GDSTK_StyleMap* label_style,
-                        const char* background, double pad, int pad_as_percentage) {
+                         uint32_t precision, GDSTK_StyleMap* shape_style,
+                         GDSTK_StyleMap* label_style, const char* background, double pad,
+                         int pad_as_percentage) {
     if (!cell) {
         fprintf(stderr, "Warning: gdstk_cell_write_svg received null cell parameter\n");
         return -1;
@@ -471,7 +497,7 @@ int gdstk_cell_write_svg(const GDSTK_Cell* cell, const char* filename, double sc
     StyleMap* shape = reinterpret_cast<StyleMap*>(shape_style);
     StyleMap* label = reinterpret_cast<StyleMap*>(label_style);
     return static_cast<int>(cell->cell.write_svg(filename, scaling, precision, shape, label,
-                                                background, pad, pad_as_percentage != 0, nullptr));
+                                                 background, pad, pad_as_percentage != 0, nullptr));
 }
 
-} // extern "C" 
+}  // extern "C"

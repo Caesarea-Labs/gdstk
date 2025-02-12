@@ -1,6 +1,7 @@
 #ifndef GDSTK_HEADER_POLYGON_C
 #define GDSTK_HEADER_POLYGON_C
 
+#include <cell_c.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -30,8 +31,7 @@ typedef enum {
 // Field getters
 GDSTK_API uint64_t gdstk_polygon_get_tag(const GDSTK_Polygon* polygon);
 GDSTK_API uint64_t gdstk_polygon_point_array_count(const GDSTK_Polygon* polygon);
-  ///The array must be freed by the user.
-GDSTK_API GDSTK_Array* gdstk_polygon_get_point_array(const GDSTK_Polygon* polygon);
+GDSTK_API struct GDSTK_Array gdstk_polygon_get_point_array(const GDSTK_Polygon* polygon);
 GDSTK_API void* gdstk_polygon_get_owner(const GDSTK_Polygon* polygon);
 
 // Repetition getters
@@ -107,27 +107,27 @@ GDSTK_API void gdstk_polygon_transform(GDSTK_Polygon* polygon, double magnificat
 GDSTK_API void gdstk_polygon_fillet(GDSTK_Polygon* polygon, const double* radii,
                                     uint64_t radii_count, double tolerance);
 GDSTK_API void gdstk_polygon_fracture(const GDSTK_Polygon* polygon, uint64_t max_points,
-                                      double precision, struct GDSTK_Array* result);
-GDSTK_API void gdstk_polygon_apply_repetition(GDSTK_Polygon* polygon, struct GDSTK_Array* result);
+                                      double precision, struct GDSTK_Array result);
+GDSTK_API void gdstk_polygon_apply_repetition(GDSTK_Polygon* polygon, struct GDSTK_Array result);
 
 // Factory functions for creating specific polygon shapes
 GDSTK_API GDSTK_Polygon* gdstk_polygon_rectangle(const GDSTK_Vec2* corner1,
-                                                 const GDSTK_Vec2* corner2, int tag);
+                                                 const GDSTK_Vec2* corner2, Tag tag);
 GDSTK_API GDSTK_Polygon* gdstk_polygon_cross(const GDSTK_Vec2* center, double full_size,
-                                             double arm_width, int tag);
+                                             double arm_width, Tag tag);
 GDSTK_API GDSTK_Polygon* gdstk_polygon_regular(const GDSTK_Vec2* center, double side_length,
-                                               uint64_t sides, double rotation, int tag);
+                                               uint64_t sides, double rotation, Tag tag);
 GDSTK_API GDSTK_Polygon* gdstk_polygon_ellipse(const GDSTK_Vec2* center, double radius_x,
                                                double radius_y, double inner_radius_x,
                                                double inner_radius_y, double initial_angle,
-                                               double final_angle, double tolerance, int tag);
+                                               double final_angle, double tolerance, Tag tag);
 GDSTK_API GDSTK_Polygon* gdstk_polygon_racetrack(const GDSTK_Vec2* center, double straight_length,
                                                  double radius, double inner_radius, int vertical,
-                                                 double tolerance, int tag);
+                                                 double tolerance, Tag tag);
 
 // Text to polygon conversion
 GDSTK_API void gdstk_polygon_text(const char* s, double size, const GDSTK_Vec2* position,
-                                  int vertical, int tag, struct GDSTK_Array* result);
+                                  int vertical, Tag tag, struct GDSTK_Array* result);
 
 // Contour generation
 GDSTK_API int gdstk_polygon_contour(const double* data, uint64_t rows, uint64_t cols, double level,

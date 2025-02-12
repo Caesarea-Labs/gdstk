@@ -4,10 +4,6 @@
 
 using namespace gdstk;
 
-// Internal wrapper structures
-struct GDSTK_Array {
-    gdstk::Array<void*>* array;
-};
 
 
 
@@ -38,13 +34,15 @@ uint64_t gdstk_polygon_point_array_count(const GDSTK_Polygon* polygon) {
     return polygon->polygon.point_array.count;
 }
 
-GDSTK_Array* gdstk_polygon_get_point_array(const GDSTK_Polygon* polygon) {
+GDSTK_Array gdstk_polygon_get_point_array(const GDSTK_Polygon* polygon) {
     if (!polygon) {
         fprintf(stderr, "Warning: gdstk_polygon_get_point_array received null polygon parameter\n");
-        return nullptr;
+        constexpr GDSTK_Array array = {nullptr};
+        return array;
     }
-    const auto array = new GDSTK_Array;
-    array->array = reinterpret_cast<Array<void*>*>(const_cast<Array<Vec2>*>(&polygon->polygon.point_array));
+    const GDSTK_Array array = {
+        reinterpret_cast<Array<void*>*>(const_cast<Array<Vec2>*>(&polygon->polygon.point_array))
+    };
     return array;
 }
 
@@ -529,32 +527,32 @@ void gdstk_polygon_fillet(GDSTK_Polygon* polygon, const double* radii, uint64_t 
 }
 
 void gdstk_polygon_fracture(const GDSTK_Polygon* polygon, uint64_t max_points, double precision, 
-                          struct GDSTK_Array* result) {
+                          GDSTK_Array result) {
     if (!polygon) {
         fprintf(stderr, "Warning: gdstk_polygon_fracture received null polygon parameter\n");
         return;
     }
-    if (!result) {
+    if (!result.array) {
         fprintf(stderr, "Warning: gdstk_polygon_fracture received null result parameter\n");
         return;
     }
-    polygon->polygon.fracture(max_points, precision, *reinterpret_cast<Array<Polygon*>*>(result->array));
+    polygon->polygon.fracture(max_points, precision, *reinterpret_cast<Array<Polygon*>*>(result.array));
 }
 
-void gdstk_polygon_apply_repetition(GDSTK_Polygon* polygon, struct GDSTK_Array* result) {
+void gdstk_polygon_apply_repetition(GDSTK_Polygon* polygon, GDSTK_Array result) {
     if (!polygon) {
         fprintf(stderr, "Warning: gdstk_polygon_apply_repetition received null polygon parameter\n");
         return;
     }
-    if (!result) {
+    if (!result.array) {
         fprintf(stderr, "Warning: gdstk_polygon_apply_repetition received null result parameter\n");
         return;
     }
-    polygon->polygon.apply_repetition(*reinterpret_cast<Array<Polygon*>*>(result->array));
+    polygon->polygon.apply_repetition(*reinterpret_cast<Array<Polygon*>*>(result.array));
 }
 
 // Factory functions for creating specific polygon shapes
-GDSTK_Polygon* gdstk_polygon_rectangle(const GDSTK_Vec2* corner1, const GDSTK_Vec2* corner2, int tag) {
+GDSTK_Polygon* gdstk_polygon_rectangle(const GDSTK_Vec2* corner1, const GDSTK_Vec2* corner2, Tag tag) {
     if (!corner1) {
         fprintf(stderr, "Warning: gdstk_polygon_rectangle received null corner1 parameter\n");
         return nullptr;
@@ -568,7 +566,7 @@ GDSTK_Polygon* gdstk_polygon_rectangle(const GDSTK_Vec2* corner1, const GDSTK_Ve
     return wrapper;
 }
 
-GDSTK_Polygon* gdstk_polygon_cross(const GDSTK_Vec2* center, double full_size, double arm_width, int tag) {
+GDSTK_Polygon* gdstk_polygon_cross(const GDSTK_Vec2* center, double full_size, double arm_width, Tag tag) {
     if (!center) {
         fprintf(stderr, "Warning: gdstk_polygon_cross received null center parameter\n");
         return nullptr;
@@ -579,7 +577,7 @@ GDSTK_Polygon* gdstk_polygon_cross(const GDSTK_Vec2* center, double full_size, d
 }
 
 GDSTK_Polygon* gdstk_polygon_regular(const GDSTK_Vec2* center, double side_length, uint64_t sides, 
-                                   double rotation, int tag) {
+                                   double rotation, Tag tag) {
     if (!center) {
         fprintf(stderr, "Warning: gdstk_polygon_regular received null center parameter\n");
         return nullptr;
@@ -592,7 +590,7 @@ GDSTK_Polygon* gdstk_polygon_regular(const GDSTK_Vec2* center, double side_lengt
 GDSTK_Polygon* gdstk_polygon_ellipse(const GDSTK_Vec2* center, double radius_x, double radius_y,
                                     double inner_radius_x, double inner_radius_y,
                                     double initial_angle, double final_angle,
-                                    double tolerance, int tag) {
+                                    double tolerance, Tag tag) {
     if (!center) {
         fprintf(stderr, "Warning: gdstk_polygon_ellipse received null center parameter\n");
         return nullptr;
@@ -606,7 +604,7 @@ GDSTK_Polygon* gdstk_polygon_ellipse(const GDSTK_Vec2* center, double radius_x, 
 
 GDSTK_Polygon* gdstk_polygon_racetrack(const GDSTK_Vec2* center, double straight_length,
                                       double radius, double inner_radius,
-                                      int vertical, double tolerance, int tag) {
+                                      int vertical, double tolerance, Tag tag) {
     if (!center) {
         fprintf(stderr, "Warning: gdstk_polygon_racetrack received null center parameter\n");
         return nullptr;
@@ -620,7 +618,7 @@ GDSTK_Polygon* gdstk_polygon_racetrack(const GDSTK_Vec2* center, double straight
 
 // Text to polygon conversion
 void gdstk_polygon_text(const char* s, double size, const GDSTK_Vec2* position,
-                       int vertical, int tag, struct GDSTK_Array* result) {
+                       int vertical, Tag tag, struct GDSTK_Array* result) {
     if (!s) {
         fprintf(stderr, "Warning: gdstk_polygon_text received null text parameter\n");
         return;

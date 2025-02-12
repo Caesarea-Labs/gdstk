@@ -47,6 +47,7 @@ typedef enum  {
 
 
 
+
 // Library functions
 GDSTK_API struct GDSTK_Library* gdstk_library_create(const char* name, double unit, double precision);
 GDSTK_API void gdstk_library_free(struct GDSTK_Library* library);
@@ -84,8 +85,8 @@ GDSTK_API struct GDSTK_Property* gdstk_library_get_properties(const struct GDSTK
 GDSTK_API void gdstk_library_set_properties(struct GDSTK_Library* library, struct GDSTK_Property* properties);
 
 // Top level cell retrieval
-GDSTK_API void gdstk_library_get_top_level(const struct GDSTK_Library* library, struct GDSTK_Array* top_cells,
-                                          struct GDSTK_Array* top_rawcells);
+GDSTK_API void gdstk_library_get_top_level(const struct GDSTK_Library* library,struct GDSTK_Array top_cells,
+                                          struct GDSTK_Array top_rawcells);
 
 // Cell replacement functions
 GDSTK_API void gdstk_library_replace_cell_with_cell(struct GDSTK_Library* library, struct GDSTK_Cell* old_cell,

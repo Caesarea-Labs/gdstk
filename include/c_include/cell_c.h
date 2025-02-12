@@ -24,7 +24,8 @@ typedef struct GDSTK_Map_RawCell GDSTK_Map_RawCell;
 typedef struct GDSTK_Set_Tag GDSTK_Set_Tag;
 typedef struct GDSTK_TagMap GDSTK_TagMap;
 typedef struct GDSTK_StyleMap GDSTK_StyleMap;
-
+  typedef uint64_t Tag;
+  
 // Constructor and destructor
 GDSTK_API GDSTK_Cell* gdstk_cell_create(const char* name);
 GDSTK_API void gdstk_cell_free(GDSTK_Cell* cell);
@@ -35,13 +36,15 @@ GDSTK_API const char* gdstk_cell_get_name(const GDSTK_Cell* cell);
 GDSTK_API void gdstk_cell_set_name(GDSTK_Cell* cell, const char* name);
 
 // Array accessors
-GDSTK_API uint64_t gdstk_cell_polygon_count(const GDSTK_Cell* cell);
-GDSTK_API GDSTK_Polygon* gdstk_cell_get_polygon(const GDSTK_Cell* cell, uint64_t index);
-GDSTK_API void gdstk_cell_add_polygon(GDSTK_Cell* cell, GDSTK_Polygon* polygon);
-
-GDSTK_API uint64_t gdstk_cell_reference_count(const GDSTK_Cell* cell);
-GDSTK_API GDSTK_Reference* gdstk_cell_get_reference(const GDSTK_Cell* cell, uint64_t index);
-GDSTK_API void gdstk_cell_add_reference(GDSTK_Cell* cell, GDSTK_Reference* reference);
+  // GDSTK_Array gdstk_cell_get_polygons(const GDSTK_Cell* cell);
+GDSTK_API struct GDSTK_Array gdstk_cell_get_references(const GDSTK_Cell* cell);
+// GDSTK_API uint64_t gdstk_cell_polygon_count(const GDSTK_Cell* cell);
+// GDSTK_API GDSTK_Polygon* gdstk_cell_get_polygon(const GDSTK_Cell* cell, uint64_t index);
+// GDSTK_API void gdstk_cell_add_polygon(GDSTK_Cell* cell, GDSTK_Polygon* polygon);
+//
+// GDSTK_API uint64_t gdstk_cell_reference_count(const GDSTK_Cell* cell);
+// GDSTK_API GDSTK_Reference* gdstk_cell_get_reference(const GDSTK_Cell* cell, uint64_t index);
+// GDSTK_API void gdstk_cell_add_reference(GDSTK_Cell* cell, GDSTK_Reference* reference);
 
 GDSTK_API uint64_t gdstk_cell_flexpath_count(const GDSTK_Cell* cell);
 GDSTK_API GDSTK_FlexPath* gdstk_cell_get_flexpath(const GDSTK_Cell* cell, uint64_t index);
@@ -61,20 +64,20 @@ GDSTK_API void gdstk_cell_set_properties(GDSTK_Cell* cell, GDSTK_Property* prope
 
 // Geometry operations
 GDSTK_API void gdstk_cell_get_bounding_box(const GDSTK_Cell* cell, GDSTK_Vec2* min, GDSTK_Vec2* max);
-GDSTK_API void gdstk_cell_get_convex_hull(const GDSTK_Cell* cell, struct GDSTK_Array* result);
+GDSTK_API void gdstk_cell_get_convex_hull(const GDSTK_Cell* cell, struct GDSTK_Array result);
 
 // Copy operations
 GDSTK_API void gdstk_cell_copy_from(GDSTK_Cell* dst, const GDSTK_Cell* src, const char* new_name, int deep_copy);
 
 // Element retrieval
 GDSTK_API void gdstk_cell_get_polygons(const GDSTK_Cell* cell, int apply_repetitions, int include_paths, 
-                            int64_t depth, int filter, int tag, struct GDSTK_Array* result);
+                            int64_t depth, int filter, Tag tag, struct GDSTK_Array result);
 GDSTK_API void gdstk_cell_get_flexpaths(const GDSTK_Cell* cell, int apply_repetitions, int64_t depth, 
-                             int filter, int tag, struct GDSTK_Array* result);
+                             int filter, Tag tag, struct GDSTK_Array result);
 GDSTK_API void gdstk_cell_get_robustpaths(const GDSTK_Cell* cell, int apply_repetitions, int64_t depth, 
-                               int filter, int tag, struct GDSTK_Array* result);
+                               int filter, Tag tag, struct GDSTK_Array result);
 GDSTK_API void gdstk_cell_get_labels(const GDSTK_Cell* cell, int apply_repetitions, int64_t depth, 
-                          int filter, int tag, struct GDSTK_Array* result);
+                          int filter, Tag tag, struct GDSTK_Array result);
 
 // Dependency management
 GDSTK_API void gdstk_cell_get_dependencies(const GDSTK_Cell* cell, int recursive, GDSTK_Map_Cell* result);
@@ -86,7 +89,7 @@ GDSTK_API void gdstk_cell_get_label_tags(const GDSTK_Cell* cell, GDSTK_Set_Tag* 
 GDSTK_API void gdstk_cell_remap_tags(GDSTK_Cell* cell, const GDSTK_TagMap* map);
 
 // Cell operations
-GDSTK_API void gdstk_cell_flatten(GDSTK_Cell* cell, int apply_repetitions, struct GDSTK_Array* removed_references);
+GDSTK_API void gdstk_cell_flatten(GDSTK_Cell* cell, int apply_repetitions, struct GDSTK_Array removed_references);
 
 // File output
 GDSTK_API int gdstk_cell_to_gds(const GDSTK_Cell* cell, FILE* out, double scaling, uint64_t max_points, 
