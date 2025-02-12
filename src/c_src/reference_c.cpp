@@ -6,6 +6,7 @@
 #include "gdstk/property.hpp"
 #include "gdstk/utils.hpp"
 #include "gdstk/array.hpp"
+#include "polygon_c.h"
 #include <string>
 
 using namespace gdstk;
@@ -15,10 +16,7 @@ struct GDSTK_Array {
     Array<void*>* array;
 };
 
-struct GDSTK_Vec2 {
-    double x;
-    double y;
-};
+
 
 struct GDSTK_Reference {
     Reference reference;

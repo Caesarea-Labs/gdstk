@@ -9,10 +9,7 @@ struct GDSTK_Array {
     gdstk::Array<void*>* array;
 };
 
-struct GDSTK_Vec2 {
-    double x;
-    double y;
-};
+
 
 struct GDSTK_PropertyValue {
     gdstk::PropertyValue* value;
@@ -41,20 +38,14 @@ uint64_t gdstk_polygon_point_array_count(const GDSTK_Polygon* polygon) {
     return polygon->polygon.point_array.count;
 }
 
-void gdstk_polygon_get_point_array(const GDSTK_Polygon* polygon, GDSTK_Vec2* points, uint64_t count) {
+GDSTK_Array* gdstk_polygon_get_point_array(const GDSTK_Polygon* polygon) {
     if (!polygon) {
         fprintf(stderr, "Warning: gdstk_polygon_get_point_array received null polygon parameter\n");
-        return;
+        return nullptr;
     }
-    if (!points) {
-        fprintf(stderr, "Warning: gdstk_polygon_get_point_array received null points parameter\n");
-        return;
-    }
-    uint64_t n = count < polygon->polygon.point_array.count ? count : polygon->polygon.point_array.count;
-    for (uint64_t i = 0; i < n; i++) {
-        points[i].x = polygon->polygon.point_array[i].x;
-        points[i].y = polygon->polygon.point_array[i].y;
-    }
+    const auto array = new GDSTK_Array;
+    array->array = reinterpret_cast<Array<void*>*>(const_cast<Array<Vec2>*>(&polygon->polygon.point_array));
+    return array;
 }
 
 void* gdstk_polygon_get_owner(const GDSTK_Polygon* polygon) {
