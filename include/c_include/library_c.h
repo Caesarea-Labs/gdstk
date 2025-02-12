@@ -23,14 +23,29 @@ struct GDSTK_TagSet;
 struct GDSTK_LibraryInfo;
 struct GDSTK_TagMap;
 
-typedef enum {
-    GDSTK_SUCCESS = 0,
-    GDSTK_ERROR_FILE_OPEN,
-    GDSTK_ERROR_FILE_FORMAT,
-    GDSTK_ERROR_INVALID_UNIT,
-    GDSTK_ERROR_NO_LIBRARY,
-    GDSTK_ERROR_OTHER
+typedef enum  {
+    GDSTK_NoError = 0,
+    // Warnings
+    GDSTK_BooleanError,
+    GDSTK_EmptyPath,
+    GDSTK_IntersectionNotFound,
+    GDSTK_MissingReference,
+    GDSTK_UnsupportedRecord,
+    GDSTK_UnofficialSpecification,
+    GDSTK_InvalidRepetition,
+    GDSTK_Overflow,
+    // Errors
+    GDSTK_ChecksumError,
+    GDSTK_OutputFileOpenError,
+    GDSTK_InputFileOpenError,
+    GDSTK_InputFileError,
+    GDSTK_FileError,
+    GDSTK_InvalidFile,
+    GDSTK_InsufficientMemory,
+    GDSTK_ZlibError,
 } GDSTK_ErrorCode;
+
+
 
 // Library functions
 GDSTK_API struct GDSTK_Library* gdstk_library_create(const char* name, double unit, double precision);

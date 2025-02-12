@@ -119,11 +119,11 @@ GDSTK_ErrorCode gdstk_library_write_gds(const GDSTK_Library* library, const char
                                       uint64_t max_points, const struct tm* timestamp) {
     if (!library) {
         fprintf(stderr, "Warning: gdstk_library_write_gds received null library parameter\n");
-        return GDSTK_ERROR_NO_LIBRARY;
+        return GDSTK_FileError;
     }
     if (!filename) {
         fprintf(stderr, "Warning: gdstk_library_write_gds received null filename parameter\n");
-        return GDSTK_ERROR_NO_LIBRARY;
+        return GDSTK_FileError;
     }
     ErrorCode result = library->lib.write_gds(filename, max_points, const_cast<tm*>(timestamp));
     return static_cast<GDSTK_ErrorCode>(result);
@@ -134,11 +134,11 @@ GDSTK_ErrorCode gdstk_library_write_oas(GDSTK_Library* library, const char* file
                                        uint16_t config_flags) {
     if (!library) {
         fprintf(stderr, "Warning: gdstk_library_write_oas received null library parameter\n");
-        return GDSTK_ERROR_NO_LIBRARY;
+        return GDSTK_FileError;
     }
     if (!filename) {
         fprintf(stderr, "Warning: gdstk_library_write_oas received null filename parameter\n");
-        return GDSTK_ERROR_NO_LIBRARY;
+        return GDSTK_FileError;
     }
     ErrorCode result = library->lib.write_oas(filename, circle_tolerance, deflate_level, config_flags);
     return static_cast<GDSTK_ErrorCode>(result);
@@ -326,7 +326,7 @@ GDSTK_Library* gdstk_read_gds(const char* filename, double unit, double toleranc
                              const GDSTK_TagSet* shape_tags, GDSTK_ErrorCode* error_code) {
     if (!filename) {
         fprintf(stderr, "Warning: gdstk_read_gds received null filename parameter\n");
-        if (error_code) *error_code = GDSTK_ERROR_NO_LIBRARY;
+        if (error_code) *error_code = GDSTK_FileError;
         return nullptr;
     }
     
@@ -345,7 +345,7 @@ GDSTK_Library* gdstk_read_oas(const char* filename, double unit, double toleranc
                              GDSTK_ErrorCode* error_code) {
     if (!filename) {
         fprintf(stderr, "Warning: gdstk_read_oas received null filename parameter\n");
-        if (error_code) *error_code = GDSTK_ERROR_NO_LIBRARY;
+        if (error_code) *error_code = GDSTK_FileError;
         return nullptr;
     }
     
@@ -363,15 +363,15 @@ GDSTK_Library* gdstk_read_oas(const char* filename, double unit, double toleranc
 GDSTK_ErrorCode gdstk_gds_units(const char* filename, double* unit, double* precision) {
     if (!filename) {
         fprintf(stderr, "Warning: gdstk_gds_units received null filename parameter\n");
-        return GDSTK_ERROR_OTHER;
+        return GDSTK_ChecksumError;
     }
     if (!unit) {
         fprintf(stderr, "Warning: gdstk_gds_units received null unit parameter\n");
-        return GDSTK_ERROR_OTHER;
+        return GDSTK_ChecksumError;
     }
     if (!precision) {
         fprintf(stderr, "Warning: gdstk_gds_units received null precision parameter\n");
-        return GDSTK_ERROR_OTHER;
+        return GDSTK_ChecksumError;
     }
     ErrorCode result = gds_units(filename, *unit, *precision);
     return static_cast<GDSTK_ErrorCode>(result);
@@ -380,11 +380,11 @@ GDSTK_ErrorCode gdstk_gds_units(const char* filename, double* unit, double* prec
 GDSTK_ErrorCode gdstk_oas_precision(const char* filename, double* precision) {
     if (!filename) {
         fprintf(stderr, "Warning: gdstk_oas_precision received null filename parameter\n");
-        return GDSTK_ERROR_OTHER;
+        return GDSTK_ChecksumError;
     }
     if (!precision) {
         fprintf(stderr, "Warning: gdstk_oas_precision received null precision parameter\n");
-        return GDSTK_ERROR_OTHER;
+        return GDSTK_ChecksumError;
     }
     ErrorCode result = oas_precision(filename, *precision);
     return static_cast<GDSTK_ErrorCode>(result);
@@ -393,7 +393,7 @@ GDSTK_ErrorCode gdstk_oas_precision(const char* filename, double* precision) {
 int gdstk_oas_validate(const char* filename, uint32_t* signature, GDSTK_ErrorCode* error_code) {
     if (!filename) {
         fprintf(stderr, "Warning: gdstk_oas_validate received null filename parameter\n");
-        if (error_code) *error_code = GDSTK_ERROR_OTHER;
+        if (error_code) *error_code = GDSTK_ChecksumError;
         return 0;
     }
     ErrorCode ec = ErrorCode::NoError;
@@ -405,11 +405,11 @@ int gdstk_oas_validate(const char* filename, uint32_t* signature, GDSTK_ErrorCod
 GDSTK_ErrorCode gdstk_gds_info(const char* filename, GDSTK_LibraryInfo* info) {
     if (!filename) {
         fprintf(stderr, "Warning: gdstk_gds_info received null filename parameter\n");
-        return GDSTK_ERROR_OTHER;
+        return GDSTK_ChecksumError;
     }
     if (!info) {
         fprintf(stderr, "Warning: gdstk_gds_info received null info parameter\n");
-        return GDSTK_ERROR_OTHER;
+        return GDSTK_ChecksumError;
     }
     ErrorCode result = gds_info(filename, info->info);
     return static_cast<GDSTK_ErrorCode>(result);
