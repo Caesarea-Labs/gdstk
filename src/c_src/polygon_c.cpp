@@ -1,4 +1,7 @@
 #include "polygon_c.h"
+
+#include <type_traits>
+
 #include "gdstk/polygon.hpp"
 #include "gdstk/vec.hpp"
 
@@ -34,16 +37,17 @@ uint64_t gdstk_polygon_point_array_count(const GDSTK_Polygon* polygon) {
     return polygon->polygon.point_array.count;
 }
 
-GDSTK_Array gdstk_polygon_get_point_array(const GDSTK_Polygon* polygon) {
+struct GDSTK_Vec2Array gdstk_polygon_get_point_array(const GDSTK_Polygon* polygon) {
     if (!polygon) {
         fprintf(stderr, "Warning: gdstk_polygon_get_point_array received null polygon parameter\n");
-        constexpr GDSTK_Array array = {nullptr};
-        return array;
+        return {0, nullptr};
     }
-    const GDSTK_Array array = {
-        reinterpret_cast<Array<void*>*>(const_cast<Array<Vec2>*>(&polygon->polygon.point_array))
-    };
-    return array;
+    static_assert(sizeof(GDSTK_Vec2) == sizeof(Vec2), "Size mismatch");
+    static_assert(alignof(GDSTK_Vec2) == alignof(Vec2), "Alignment mismatch");
+    static_assert(std::is_standard_layout_v<GDSTK_Vec2>, "GDSTK_Vec2 not standard-layout");
+    static_assert(std::is_standard_layout_v<Vec2>, "Vec2 not standard-layout");
+    auto* items = reinterpret_cast<GDSTK_Vec2*>(polygon->polygon.point_array.items);
+    return {polygon->polygon.point_array.count, items};
 }
 
 void* gdstk_polygon_get_owner(const GDSTK_Polygon* polygon) {
@@ -527,28 +531,28 @@ void gdstk_polygon_fillet(GDSTK_Polygon* polygon, const double* radii, uint64_t 
 }
 
 void gdstk_polygon_fracture(const GDSTK_Polygon* polygon, uint64_t max_points, double precision, 
-                          GDSTK_Array result) {
+                          struct GDSTK_Array* result) {
     if (!polygon) {
         fprintf(stderr, "Warning: gdstk_polygon_fracture received null polygon parameter\n");
         return;
     }
-    if (!result.array) {
+    if (!result) {
         fprintf(stderr, "Warning: gdstk_polygon_fracture received null result parameter\n");
         return;
     }
-    polygon->polygon.fracture(max_points, precision, *reinterpret_cast<Array<Polygon*>*>(result.array));
+    polygon->polygon.fracture(max_points, precision, *reinterpret_cast<Array<Polygon*>*>(result->array));
 }
 
-void gdstk_polygon_apply_repetition(GDSTK_Polygon* polygon, GDSTK_Array result) {
+void gdstk_polygon_apply_repetition(GDSTK_Polygon* polygon, struct GDSTK_Array* result) {
     if (!polygon) {
         fprintf(stderr, "Warning: gdstk_polygon_apply_repetition received null polygon parameter\n");
         return;
     }
-    if (!result.array) {
+    if (!result) {
         fprintf(stderr, "Warning: gdstk_polygon_apply_repetition received null result parameter\n");
         return;
     }
-    polygon->polygon.apply_repetition(*reinterpret_cast<Array<Polygon*>*>(result.array));
+    polygon->polygon.apply_repetition(*reinterpret_cast<Array<Polygon*>*>(result->array));
 }
 
 // Factory functions for creating specific polygon shapes

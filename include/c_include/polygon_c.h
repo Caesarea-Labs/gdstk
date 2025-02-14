@@ -18,6 +18,11 @@ struct GDSTK_Vec2 {
     double y;
 };
 
+struct GDSTK_Vec2Array {
+    uint64_t count;
+    struct GDSTK_Vec2* items;
+};
+
 typedef struct GDSTK_PropertyValue GDSTK_PropertyValue;
 
 // Property value type enum
@@ -31,7 +36,7 @@ typedef enum {
 // Field getters
 GDSTK_API uint64_t gdstk_polygon_get_tag(const GDSTK_Polygon* polygon);
 GDSTK_API uint64_t gdstk_polygon_point_array_count(const GDSTK_Polygon* polygon);
-GDSTK_API struct GDSTK_Array gdstk_polygon_get_point_array(const GDSTK_Polygon* polygon);
+GDSTK_API struct GDSTK_Vec2Array gdstk_polygon_get_point_array(const GDSTK_Polygon* polygon);
 GDSTK_API void* gdstk_polygon_get_owner(const GDSTK_Polygon* polygon);
 
 // Repetition getters
@@ -107,8 +112,8 @@ GDSTK_API void gdstk_polygon_transform(GDSTK_Polygon* polygon, double magnificat
 GDSTK_API void gdstk_polygon_fillet(GDSTK_Polygon* polygon, const double* radii,
                                     uint64_t radii_count, double tolerance);
 GDSTK_API void gdstk_polygon_fracture(const GDSTK_Polygon* polygon, uint64_t max_points,
-                                      double precision, struct GDSTK_Array result);
-GDSTK_API void gdstk_polygon_apply_repetition(GDSTK_Polygon* polygon, struct GDSTK_Array result);
+                                      double precision, struct GDSTK_Array* result);
+GDSTK_API void gdstk_polygon_apply_repetition(GDSTK_Polygon* polygon, struct GDSTK_Array* result);
 
 // Factory functions for creating specific polygon shapes
 GDSTK_API GDSTK_Polygon* gdstk_polygon_rectangle(const GDSTK_Vec2* corner1,
