@@ -10,7 +10,7 @@ if(WIN32)
     set(VCPKG_BIN_DIR "${CMAKE_SOURCE_DIR}/vcpkg_installed/${_triplet}/bin")
 
 else ()
-    message(FATAL_ERROR "Only windows works at the moment")
+    message(STATUS "Linux might not work")
 endif ()
 
 

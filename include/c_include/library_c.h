@@ -84,6 +84,8 @@ GDSTK_API struct GDSTK_RawCell* gdstk_library_get_rawcell_by_index(const struct 
 GDSTK_API struct GDSTK_Property* gdstk_library_get_properties(const struct GDSTK_Library* library);
 GDSTK_API void gdstk_library_set_properties(struct GDSTK_Library* library, struct GDSTK_Property* properties);
 
+struct GDSTK_Array;  // Forward declaration
+
 // Top level cell retrieval
 GDSTK_API void gdstk_library_get_top_level(const struct GDSTK_Library* library,struct GDSTK_Array top_cells,
                                           struct GDSTK_Array top_rawcells);

@@ -26,8 +26,9 @@ if(DEFINED ENV{VCPKG_ROOT})
 else ()
     message(STATUS "No vcpkg found - env is '$ENV{VCPKG_ROOT}', good luck")
 endif()
-include("$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
-
+if(WIN32)
+    include("$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+endif ()
 ##############################################################
 include(GNUInstallDirs)
 find_package(ZLIB 1.2.7)

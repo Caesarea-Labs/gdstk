@@ -6,7 +6,7 @@
 
 int main() {
     GDSTK_ErrorCode err;
-    struct GDSTK_Library* lib = gdstk_read_gds("../../../../example.gds", 1e-6, 1e-9, NULL, &err);
+    struct GDSTK_Library* lib = gdstk_read_gds("../../../../gds/oleg_full.gds", 1e-6, 1e-9, NULL, &err);
     struct GDSTK_Array cells = gdstk_array_create(0);
     struct GDSTK_Array raw_cells = gdstk_array_create(0);
     gdstk_library_get_top_level(lib, cells, raw_cells);

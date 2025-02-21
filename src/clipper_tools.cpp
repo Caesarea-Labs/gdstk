@@ -210,6 +210,7 @@ static void bounding_box(ClipperLib::Path& points, ClipperLib::cInt* bb) {
 ////////////////// CAESAREALABS EDIT //////////////////////
 //////// REASON: See boolean()
 // Minimal declaration of IsDebuggerPresent without including windows.h
+#ifdef _WIN32
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -218,6 +219,24 @@ extern "C" {
 
 #ifdef __cplusplus
 }
+#endif
+#else
+// Linux: Implement a simple version that checks /proc/self/status.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    int IsDebuggerPresent(void) {
+        return false;
+    }
+
+#ifdef __cplusplus
+}
+#endif
 #endif
 ///////////////////////////////////////////////////////////////
 
